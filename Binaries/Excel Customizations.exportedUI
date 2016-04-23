@@ -1,0 +1,16 @@
+<mso:cmd app="Excel" dt="0" />
+<mso:customUI xmlns:x1="TFCOfficeShim.Connect.14" xmlns:mso="http://schemas.microsoft.com/office/2009/07/customui">
+    <mso:ribbon>
+        <mso:qat/>
+        <mso:tabs>
+            <mso:tab id="mso_c1.33CB67B7" label="Special" insertAfterQ="x1:IDC_TEAM_TAB">
+                <mso:group id="mso_c2.33CB67B7" label="Test Addin" imageMso="ModuleInsert" autoScale="true">
+                    <mso:control idQ="mso:FunctionWizard" visible="true"/>
+                </mso:group>
+                <mso:group id="mso_c1.33CE2201" label="New Group" autoScale="true">
+                    <mso:control idQ="mso:FileSendAsAttachment" visible="true"/>
+                </mso:group>
+            </mso:tab>
+        </mso:tabs>
+    </mso:ribbon>
+</mso:customUI>
