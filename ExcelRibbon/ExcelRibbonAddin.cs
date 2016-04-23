@@ -22,7 +22,6 @@ namespace ExcelRibbonCL
             return string.Format("Hello {0} You are Cool", name);
         }
 
-       
         private IRibbonUI ribbon = null;
 
         public void OnLogonPressed(IRibbonControl control)
@@ -31,13 +30,11 @@ namespace ExcelRibbonCL
             {
                 ribbon.InvalidateControl(control.Id);
             }
-
         }
 
         public void OnLoad(IRibbonUI ribbon)
         {
             this.ribbon = ribbon;
         }
-
     }
 }

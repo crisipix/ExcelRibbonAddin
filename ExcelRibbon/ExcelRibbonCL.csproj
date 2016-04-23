@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="ExcelDna.Integration">
       <HintPath>..\Binaries\ExcelDna-0.33.9\Distribution\ExcelDna.Integration.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -47,6 +48,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Excel2007CustomUI.xml" />
+    <Content Include="Excel2010CustomUI.xml" />
     <Content Include="ExcelRibbon-AddIn.dna">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

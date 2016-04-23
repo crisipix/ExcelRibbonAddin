@@ -1,0 +1,16 @@
+﻿<CustomUI>
+  <!-- Inside here is the RibbonX xml passed to Excel -->
+  <!-- This can also be loaded by Excel 2007 because of the namespace -->
+  <customUI xmlns='http://schemas.microsoft.com/office/2006/01/customui' loadImage='LoadImage'>
+    <ribbon>
+      <tabs>
+        <tab id='CustomTab' label='My Tab'>
+          <group id='SampleGroup' label='My Sample Group'>
+            <button id='Button1' label='My Button Label' image='M' size='large' onAction='RunTagMacro' tag='ShowHelloMessage' />
+            <button id='Button2' label='My Second Button' image='M' size='normal' onAction='OnButtonPressed'/>
+          </group >
+        </tab>
+      </tabs>
+    </ribbon>
+  </customUI>
+</CustomUI>
