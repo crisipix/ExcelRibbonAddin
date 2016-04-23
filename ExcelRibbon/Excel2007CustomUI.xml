@@ -6,11 +6,12 @@
       <tabs>
         <tab id='CustomTab' label='My Tab'>
           <group id='SampleGroup' label='My Sample Group'>
-            <button id='Button1' label='My Button Label' image='M' size='large' onAction='RunTagMacro' tag='ShowHelloMessage' />
-            <button id='Button2' label='My Second Button' image='M' size='normal' onAction='OnButtonPressed'/>
+            <button id='Button1' label='My Button Label' imageMso='M' size='large' onAction='RunTagMacro' tag='ShowHelloMessage' />
+            <button id='Button2' label='My Second Button' imageMso='M' size='normal' onAction='OnButtonPressed'/>
           </group >
         </tab>
       </tabs>
     </ribbon>
   </customUI>
 </CustomUI>
+<!--C:\Program Files (x86)\Microsoft Office\Office12-->

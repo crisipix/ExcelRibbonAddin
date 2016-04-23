@@ -2,15 +2,19 @@
   <ExternalLibrary Path="ExcelRibbonCL.dll" Pack="true" />
   <!-- Inside here is the exact RibbonX xml passed to Excel -->
     <!-- This will only be loaded for Excel 2010 because of the namespace -->
-  <customUI xmlns='http://schemas.microsoft.com/office/2009/07/customui' onLoad='OnLoad'>
-    <ribbon>
-      <tabs>
-        <tab id='CustomTab' label='My Tab' insertAfterMso='View'>
-          <group id='SampleGroup' label='My Group'>
-            <button id='LoginCmd' onAction='OnLogonPressed' label='logon' />
-          </group >
-        </tab>
-      </tabs>
-    </ribbon>
-  </customUI>
+  <!--RibbonX Visual Designer 1.94 for Microsoft Excel 12.0. XML Code produced on 2016/04/23-->
+  <CustomUI>
+    <customUI xmlns='http://schemas.microsoft.com/office/2006/01/customui' loadImage='LoadImage'>
+      <ribbon>
+        <tabs>
+          <tab id='CustomTab' label='My Tab'>
+            <group id='SampleGroup' label='My Sample Group'>
+              <button id='Button1' label='My Button Label' imageMso='M' size='large' onAction='RunTagMacro' tag='ShowHelloMessage' />
+              <button id='Button2' label='My Second Button' imageMso='M' size='normal' onAction='OnButtonPressed'/>
+            </group >
+          </tab>
+        </tabs>
+      </ribbon>
+    </customUI>
+  </CustomUI>
 </DnaLibrary>
