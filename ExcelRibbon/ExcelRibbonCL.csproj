@@ -7,8 +7,8 @@
     <ProjectGuid>{225C889F-EDA1-443E-8745-4ED4F2337A3A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ExceRibbon</RootNamespace>
-    <AssemblyName>ExceRibbon</AssemblyName>
+    <RootNamespace>ExcelRibbonCL</RootNamespace>
+    <AssemblyName>ExcelRibbonCL</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

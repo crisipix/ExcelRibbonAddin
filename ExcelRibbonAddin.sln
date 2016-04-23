@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelRibbonConsole", "ExcelRibbonConsole\ExcelRibbonConsole.csproj", "{003CAFE6-08DF-400B-8587-7EBB7A3FD2A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceRibbon", "ExceRibbon\ExceRibbon.csproj", "{225C889F-EDA1-443E-8745-4ED4F2337A3A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelRibbonCL", "ExcelRibbon\ExcelRibbonCL.csproj", "{225C889F-EDA1-443E-8745-4ED4F2337A3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

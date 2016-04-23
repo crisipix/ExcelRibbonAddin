@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExceRibbon
+namespace ExcelRibbonCL
 {
     [ComVisible(true)]
     public class ExcelRibbonAddin : ExcelRibbon
@@ -21,5 +21,23 @@ namespace ExceRibbon
         {
             return string.Format("Hello {0} You are Cool", name);
         }
+
+       
+        private IRibbonUI ribbon = null;
+
+        public void OnLogonPressed(IRibbonControl control)
+        {
+            if (ribbon != null)
+            {
+                ribbon.InvalidateControl(control.Id);
+            }
+
+        }
+
+        public void OnLoad(IRibbonUI ribbon)
+        {
+            this.ribbon = ribbon;
+        }
+
     }
 }
