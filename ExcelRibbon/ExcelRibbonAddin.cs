@@ -1,11 +1,14 @@
 ﻿using ExcelDna.Integration;
 using ExcelDna.Integration.CustomUI;
+using ExcelRibbonWPF;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Excel = Microsoft.Office.Interop;
 
 namespace ExcelRibbonCL
 {
@@ -24,7 +27,7 @@ namespace ExcelRibbonCL
 
         private IRibbonUI ribbon = null;
 
-        public void OnLogonPressed(IRibbonControl control)
+        public void OnRefresh(IRibbonControl control)
         {
             if (ribbon != null)
             {
@@ -32,6 +35,14 @@ namespace ExcelRibbonCL
             }
         }
 
+        public void OnButtonPressed(IRibbonControl control)
+        {
+            Application xlApp = (Application)ExcelDnaUtil.Application ;
+
+            MainWindow mw = new MainWindow(xlApp);
+            mw.Show();
+        }
+        
         public void OnLoad(IRibbonUI ribbon)
         {
             this.ribbon = ribbon;
