@@ -10,7 +10,7 @@
           <tab id='CustomTab' label='My Tab'>
             <group id='SampleGroup' label='My Sample Group'>
               <button id='Button1' label='Refresh' imageMso='R' size='large' onAction='OnRefresh' tag='ShowHelloMessage' />
-              <button id='Button2' label='Launce Account Loader' imageMso='M' size='normal' onAction='OnButtonPressed'/>
+              <button id='Button2' label='Launch Account Loader' imageMso='M' size='normal' onAction='OnButtonPressed'/>
             </group >
           </tab>
         </tabs>

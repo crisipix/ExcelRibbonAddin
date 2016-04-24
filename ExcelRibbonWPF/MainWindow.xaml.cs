@@ -49,6 +49,11 @@ namespace ExcelRibbonWPF
                     workSheet.Cells[index, "B"] = acct.Balance;
                     index++;
                 }
+
+                // Call to AutoFormat in Visual C# 2010. This statement replaces the 
+                // two calls to AutoFit.
+                workSheet.Range["A1", "B3"].AutoFormat(Excel.XlRangeAutoFormat.xlRangeAutoFormatClassic2);
+
             }
         }
     }
