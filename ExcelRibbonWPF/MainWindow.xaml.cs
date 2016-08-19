@@ -54,6 +54,20 @@ namespace ExcelRibbonWPF
                 // two calls to AutoFit.
                 workSheet.Range["A1", "B3"].AutoFormat(Excel.XlRangeAutoFormat.xlRangeAutoFormatClassic2);
 
+                Excel.Worksheet ws = _xlApp.ActiveSheet;
+                Excel.Range range = ws.Range[ws.Cells[1, 1], ws.Cells[(2), (5)]];
+                ws.Names.Add("TestRange", range);
+
+                //https://msdn.microsoft.com/en-us/library/microsoft.office.tools.excel.namedrange.aspx
+                //https://msdn.microsoft.com/en-us/library/7zte17ya.aspx
+                //https://msdn.microsoft.com/en-us/library/bb386091.aspx
+
+                foreach (Excel.Name n in ws.Names)
+                {
+                    Console.WriteLine(n);
+                    Excel.Range r = n.RefersToRange;
+                    //AutoFormat(Excel.XlRangeAutoFormat.xlRangeAutoFormatClassic2);
+                }
             }
         }
     }
