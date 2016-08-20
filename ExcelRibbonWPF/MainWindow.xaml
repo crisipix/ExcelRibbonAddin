@@ -12,6 +12,15 @@
             <RowDefinition ></RowDefinition>
             <RowDefinition ></RowDefinition>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
         <Button Click="Button_Click">Load Accounts and Balances</Button>
+        <Button Click="Button_Click_Highlight" Grid.Row="1">Highlight Chris' range</Button>
+        <Button Click="Button_FillText" Grid.Column="0" Grid.Row="2">Fill Apples</Button>
+        <Button Click="Button_FindText" Grid.Column="1" Grid.Row="2">Find Apples</Button>
+        
+
     </Grid>
 </Window>

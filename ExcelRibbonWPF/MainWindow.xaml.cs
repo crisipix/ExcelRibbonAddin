@@ -55,20 +55,124 @@ namespace ExcelRibbonWPF
                 workSheet.Range["A1", "B3"].AutoFormat(Excel.XlRangeAutoFormat.xlRangeAutoFormatClassic2);
 
                 Excel.Worksheet ws = _xlApp.ActiveSheet;
-                Excel.Range range = ws.Range[ws.Cells[1, 1], ws.Cells[(2), (5)]];
-                ws.Names.Add("TestRange", range);
+                Excel.Range range = ws.Range[ws.Cells[1, 1], ws.Cells[(2), (5)]]; // row 1 col 1 to row 2 col 5
+                ws.Names.Add("ChrisRange", range);//"Sheet1!ChrisRange"
 
                 //https://msdn.microsoft.com/en-us/library/microsoft.office.tools.excel.namedrange.aspx
                 //https://msdn.microsoft.com/en-us/library/7zte17ya.aspx
                 //https://msdn.microsoft.com/en-us/library/bb386091.aspx
-
+                // find the range "Sheet1!ChrisRange" and format it. 
                 foreach (Excel.Name n in ws.Names)
                 {
-                    Console.WriteLine(n);
+                    Console.WriteLine(n.Name);
                     Excel.Range r = n.RefersToRange;
-                    //AutoFormat(Excel.XlRangeAutoFormat.xlRangeAutoFormatClassic2);
+                    r.AutoFormat(Excel.XlRangeAutoFormat.xlRangeAutoFormatClassic2);
                 }
             }
+        }
+
+        private void Button_Click_Highlight(object sender, RoutedEventArgs e)
+        {
+            Excel.Worksheet ws = _xlApp.ActiveSheet;
+            
+            // find the range "Sheet1!ChrisRange" and format it. 
+            foreach (Excel.Name n in ws.Names)
+            {
+                Console.WriteLine(n.Name);
+                var chrisRangeName = $"{ws.Name}!ChrisRange";
+                if (n.Name == chrisRangeName)
+                {
+                    Excel.Range range = n.RefersToRange;
+                    range.Font.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Red);
+                    range.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Yellow);
+                    //range.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                    //range.Borders.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.FromArgb(153, 153, 153));
+
+                    //https://msdn.microsoft.com/en-us/library/bb386091.aspx
+                    //Search for text in worksheet ranges.
+                }
+
+            }
+
+        }
+        private void Button_FillText(object sender, RoutedEventArgs e)
+        {
+            Excel.Worksheet ws = _xlApp.ActiveSheet;
+
+            var array = new object[,] { { "apples", 5 }, { "pears", 2 }, { "oranges", 3 }, { "apples", 5 }, { "pears", 6 } };
+            Excel.Range Fruits = _xlApp.get_Range("E1", "F5");
+            Fruits.Value = array;
+            Fruits.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.LightGreen);
+        }
+        private void Button_FindText(object sender, RoutedEventArgs e) {
+            Excel.Range currentFind = null;
+            Excel.Range firstFind = null;
+            Excel.Worksheet ws = _xlApp.ActiveSheet;
+
+            Excel.Range Fruits = _xlApp.get_Range("E1", "F5");
+            // You should specify all these parameters every time you call this method,
+            // since they can be overridden in the user interface. 
+            //currentFind = Fruits.Find(What : "apples", After: null,
+            //    LookIn:Excel.XlFindLookIn.xlValues, LookAt:Excel.XlLookAt.xlPart,
+            //    SearchOrder : Excel.XlSearchOrder.xlByRows, SearchDirection:Excel.XlSearchDirection.xlNext, MatchCase:false,
+            //    MatchByte:null, SearchFormat:null);
+            //e Find(object What, object After, object LookIn, object LookAt, object SearchOrder, XlSearchDirection SearchDirection = XlSearchDirection.xlNext, 
+            //    object MatchCase = null, object MatchByte = null, object SearchFormat = null);
+            currentFind = Fruits.Find("apples", Type.Missing,
+                   Excel.XlFindLookIn.xlValues, Excel.XlLookAt.xlPart,
+                   Excel.XlSearchOrder.xlByRows, Excel.XlSearchDirection.xlNext, false,
+                   Type.Missing, Type.Missing);
+
+            while (currentFind != null)
+            {
+
+                // Keep track of the first range you find. 
+                if (firstFind == null)
+                {
+                    firstFind = currentFind;
+                }
+
+                // If you didn't move to a new range, you are done.
+                else if (currentFind.get_Address(Excel.XlReferenceStyle.xlA1)
+                      == firstFind.get_Address(Excel.XlReferenceStyle.xlA1))
+                {
+                    break;
+                }
+
+                currentFind.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Yellow);
+                currentFind.Font.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Red);
+                currentFind.Font.Bold = true;
+
+                //sheet.get_Range("7:9,12:12,14:14", Type.Missing) // range of rows
+                //sheet.get_Range("7:9,12:12,14:14", Type.Missing) // range of rows
+                var row = currentFind.Row;
+                var col = currentFind.Column;
+                Excel.Range Numbers = ws.Range[ws.Cells[row, col + 1], ws.Cells[row, col + 1]];
+               // Excel.Range Numbers = ws.get_Range(ws.Cells[row, col+1], ws.Cells[row, col + 1]);
+                Numbers.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Orange);
+
+                currentFind = Fruits.FindNext(currentFind);
+            }
+        }
+
+        private Excel.Range getNamedRange(string name = "ChrisRange")
+        {
+            Excel.Worksheet ws = _xlApp.ActiveSheet;
+
+            // find the range "Sheet1!ChrisRange" and format it. 
+            foreach (Excel.Name n in ws.Names)
+            {
+                Console.WriteLine(n.Name);
+                var chrisRangeName = $"{ws.Name}!{name}";
+                if (n.Name == chrisRangeName)
+                {
+                    Excel.Range range = n.RefersToRange;
+                    return range;
+                }
+
+            }
+
+            return null;
         }
     }
 }
