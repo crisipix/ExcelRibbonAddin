@@ -35,13 +35,14 @@ namespace ExcelRibbonWPF
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (_xlApp != null) {
+            if (_xlApp != null)
+            {
                 Excel.Worksheet workSheet = _xlApp.ActiveWorkbook.Worksheets[1];
                 workSheet.Cells[1, "A"] = "ID Number";
                 workSheet.Cells[1, "B"] = "Current Balance";
 
                 var accounts = Enumerable.Range(1, 100)
-                                         .Select((x, y) => new { Id = 100000 + y, Balance = new Random().Next(0,300*x) });
+                                         .Select((x, y) => new { Id = 100000 + y, Balance = new Random().Next(0, 300 * x) });
                 var index = 2;
                 foreach (var acct in accounts)
                 {
@@ -74,7 +75,7 @@ namespace ExcelRibbonWPF
         private void Button_Click_Highlight(object sender, RoutedEventArgs e)
         {
             Excel.Worksheet ws = _xlApp.ActiveSheet;
-            
+
             // find the range "Sheet1!ChrisRange" and format it. 
             foreach (Excel.Name n in ws.Names)
             {
@@ -99,17 +100,21 @@ namespace ExcelRibbonWPF
         {
             Excel.Worksheet ws = _xlApp.ActiveSheet;
 
-            var array = new object[,] { { "apples", 5 }, { "pears", 2 }, { "oranges", 3 }, { "apples", 5 }, { "pears", 6 } };
-            Excel.Range Fruits = _xlApp.get_Range("E1", "F5");
+            var array = new object[,] { { "apples", 5, 5 }, { "pears", 2, 2 }, { "oranges", 3, 3 }, { "apples", 5, 5 }, { "pears", 6, 6 } };
+            Excel.Range Fruits = _xlApp.get_Range("E1", "G5");
+            Excel.Range range = ws.Range[ws.Cells[1, 5], ws.Cells[1, 5]]; // row 1 col 1 to row 2 col 5
+            ws.Names.Add("FruitRange", range);//"Sheet1!FruitRange"
+
             Fruits.Value = array;
             Fruits.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.LightGreen);
         }
-        private void Button_FindText(object sender, RoutedEventArgs e) {
+        private void Button_FindText(object sender, RoutedEventArgs e)
+        {
             Excel.Range currentFind = null;
             Excel.Range firstFind = null;
             Excel.Worksheet ws = _xlApp.ActiveSheet;
 
-            Excel.Range Fruits = _xlApp.get_Range("E1", "F5");
+            Excel.Range Fruits = _xlApp.get_Range("E1", "G5");
             // You should specify all these parameters every time you call this method,
             // since they can be overridden in the user interface. 
             //currentFind = Fruits.Find(What : "apples", After: null,
@@ -148,13 +153,33 @@ namespace ExcelRibbonWPF
                 var row = currentFind.Row;
                 var col = currentFind.Column;
                 Excel.Range Numbers = ws.Range[ws.Cells[row, col + 1], ws.Cells[row, col + 1]];
-               // Excel.Range Numbers = ws.get_Range(ws.Cells[row, col+1], ws.Cells[row, col + 1]);
+                // Excel.Range Numbers = ws.get_Range(ws.Cells[row, col+1], ws.Cells[row, col + 1]);
                 Numbers.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Orange);
 
                 currentFind = Fruits.FindNext(currentFind);
             }
         }
+        private void Button_BorderFruitRange(object sender, RoutedEventArgs e)
+        {
+            Excel.Range range = getNamedRange("FruitRange");
+            var c = range.Column;
+            var r = range.Row;
+            Excel.Worksheet ws = _xlApp.ActiveSheet;
 
+            while (ws.Cells[r, c].Value != null)
+            {
+                c++;
+            }
+            c = c-1;
+            while (ws.Cells[r, c].Value != null)
+            {
+                r++;
+            }
+            r = r - 1;
+            var newrange = ws.Range[ws.Cells[range.Row, range.Column], ws.Cells[r, c]];
+            newrange.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Yellow);
+
+        }
         private Excel.Range getNamedRange(string name = "ChrisRange")
         {
             Excel.Worksheet ws = _xlApp.ActiveSheet;
