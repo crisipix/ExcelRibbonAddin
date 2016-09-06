@@ -151,5 +151,254 @@ namespace ExcelRibbonCL
             Console.WriteLine("Shutting Down");
             base.OnBeginShutdown(ref custom);
         }
+        
+          public void LoadTempalteIntoWorkSheet(string path)
+        {
+            try
+            {
+                var xlApp = (MExcel.Application)ExcelDnaUtil.Application;
+                //xlApp.Visible = false;
+
+                MExcel.Workbook activeBook = xlApp.ActiveWorkbook;
+                //LogUsage("Fundamentals", control.Id, path);
+
+                // Open in same workbook
+                var sourceWorkBook = xlApp.Workbooks.Open(Filename: path, ReadOnly: true);
+                try
+                {
+                    // if the active workbook on on initialization is wiped out and the source workbook
+                    // becomes the active workbook we need to reset the active workbook to a new book. 
+                    if (xlApp.ActiveWorkbook.FullName == sourceWorkBook.FullName && xlApp.Workbooks.Count == 1)
+                    {
+                        xlApp.Workbooks.Add();
+                        activeBook = xlApp.ActiveWorkbook;
+                    }
+
+                    xlApp.DisplayAlerts = false;
+
+                    // copy all sheets from the source workbook at once to maintain references within all of the related worksheets. 
+                    var lastSheet = activeBook.Worksheets.Count;
+                    sourceWorkBook.Worksheets.Copy(After: activeBook.Worksheets[lastSheet]);
+                }
+                catch (ApplicationException e)
+                {
+                    var message = string.Format("Unable to load : '{0}' {1}{2}", path, Environment.NewLine, e.Message);
+                    log.Error(message + e.Message);
+                    MessageBox.Show(message);
+                }
+                catch (Exception e)
+                {
+                    var message = string.Format("Unable to load : '{0}' {1}{2}", path, Environment.NewLine, e.Message);
+                    log.Error(message + e.Message);
+                    MessageBox.Show(message);
+
+                }
+                finally
+                {
+                    sourceWorkBook.Close(Filename: Type.Missing, RouteWorkbook: Type.Missing);
+                    //sourceWorkBook.Close(SaveChanges: false, Filename: Type.Missing, RouteWorkbook: Type.Missing);
+                    var isSaved = activeBook.Saved;
+
+                    Marshal.ReleaseComObject(sourceWorkBook);
+                }
+
+            }
+            catch (Exception e)
+            {
+                var message = string.Format("Error: File selected could not be loaded. {0}", Environment.NewLine);
+                log.Error(message + e.Message);
+                MessageBox.Show(message);
+            }
+        }
+
+        public void LoadReportParameter(IRibbonControl control)
+        {
+            try
+            {
+                var path = _fileLookup[control.Id];
+                var xlApp = (MExcel.Application)ExcelDnaUtil.Application;
+                xlApp.Visible = true;
+
+                MExcel.Workbook activeBook = xlApp.ActiveWorkbook;
+                LogUsage(UsageResources.ToolsTemplates, control.Id, path);
+                if (_openNew)
+                {
+                    var sourceWorkBook = xlApp.Workbooks.Open(Filename: path, ReadOnly: true);
+                }
+                else
+                {
+                    // Open in same workbook
+                    var sourceWorkBook = xlApp.Workbooks.Open(Filename: path, ReadOnly: true);
+                    try
+                    {
+                        // if the active workbook on on initialization is wiped out and the source workbook
+                        // becomes the active workbook we need to reset the active workbook to a new book. 
+                        if (xlApp.ActiveWorkbook.FullName == sourceWorkBook.FullName && xlApp.Workbooks.Count == 1)
+                        {
+                            xlApp.Workbooks.Add();
+                            activeBook = xlApp.ActiveWorkbook;
+                        }
+
+                        xlApp.DisplayAlerts = false;
+
+                        // copy all sheets from the source workbook at once to maintain references within all of the related worksheets. 
+                        var lastSheet = activeBook.Worksheets.Count;
+                        sourceWorkBook.Worksheets.Copy(After: activeBook.Worksheets[lastSheet]);
+
+                        //copy vbaproject
+                        CopyMacros(activeBook, sourceWorkBook);
+                        CopyReferences(activeBook, sourceWorkBook);
+                    }
+                    catch (ApplicationException e)
+                    {
+                        var message = string.Format("Unable to load : '{0}' {1}{2}", path, Environment.NewLine, e.Message);
+                        //log.Error(message + e.Message);
+                        //MessageBox.Show(message);
+                    }
+                    catch (Exception e)
+                    {
+                        var message = string.Format("Unable to load : '{0}'", path);
+                        //log.Error(message + e.Message);
+                        //MessageBox.Show(message);
+
+                    }
+                    finally
+                    {
+                        sourceWorkBook.Close(SaveChanges: false, Filename: Type.Missing, RouteWorkbook: Type.Missing);
+                        var isSaved = activeBook.Saved;
+                        Marshal.ReleaseComObject(sourceWorkBook);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                var message = string.Format("Error: File selected could not be loaded. {0}", Environment.NewLine);
+               // log.Error(message + e.Message);
+                //MessageBox.Show(message);
+            }
+        }
+
+        /// <summary>
+        /// Copy Macros  
+        /// https://support.microsoft.com/en-us/kb/282830
+        /// </summary>
+        private void CopyMacros(MExcel.Workbook activeBook, MExcel.Workbook sourceWorkBook)
+        {
+            if (!sourceWorkBook.HasVBProject) { return; }
+
+            if (!_vbModules.Any())
+            {
+                foreach (VBComponent dest in activeBook.VBProject.VBComponents)
+                {
+                    if (!_vbModules.ContainsKey(dest.Name))
+                    {
+                        _vbModules.Add(dest.Name, dest);
+                    }
+                }
+            }
+
+            try
+            {
+                foreach (VBComponent sourceComp in sourceWorkBook.VBProject.VBComponents)
+                {
+                    var sourceLines = sourceComp.CodeModule.CountOfLines;
+                    if (sourceLines == 0) { continue; }
+
+                    if (_vbModules.ContainsKey(sourceComp.Name))
+                    {
+                        VBComponent destComp = _vbModules[sourceComp.Name];
+
+                        if (destComp.CodeModule.CountOfLines == sourceLines)
+                        {
+                            var sourceCode = sourceComp.CodeModule.Lines[1, sourceLines];
+                            var destCode = destComp.CodeModule.Lines[1, destComp.CodeModule.CountOfLines];
+                            if (sourceCode == destCode)
+                            {
+                                continue; // the code is exactly the same as an existing module break and get out. 
+                            }
+                        }
+                        // append
+                        if (destComp.CodeModule.CountOfLines == 0)
+                        {
+                            destComp.CodeModule.InsertLines(1, sourceComp.CodeModule.Lines[1, sourceLines]);
+                            continue; // found the matching codemodule so lets exit
+                        }
+                    }
+                    else
+                    {
+                        // Add new macro
+                        var destComp = activeBook.VBProject.VBComponents.Add(vbext_ComponentType.vbext_ct_StdModule);
+
+                        destComp.CodeModule.AddFromString(sourceComp.CodeModule.Lines[1, sourceLines]);
+
+                        destComp.Name = sourceComp.Name;
+                        _vbModules.Add(destComp.Name, destComp);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new ApplicationException("Could not copy source macros");
+            }
+
+            activeBook.ChangeLink(Name: sourceWorkBook.Name, NewName: activeBook.Name, Type: MExcel.XlLinkType.xlLinkTypeExcelLinks);
+        }
+
+        /// <summary>
+        /// https://support.microsoft.com/en-us/kb/282830
+        /// Remove if not needed
+        /// Copy the references from the source workbook to the destination workbook
+        /// </summary>
+        private void CopyReferences(MExcel.Workbook activeBook, MExcel.Workbook sourceWorkBook)
+        {
+            if (!_references.Any())
+            {
+                foreach (Microsoft.Vbe.Interop.Reference reference in activeBook.VBProject.References)
+                {
+                    if (!_references.ContainsKey(reference.Guid))
+                    {
+                        _references.Add(reference.Guid, reference.Description);
+                    }
+                }
+            }
+
+            foreach (Microsoft.Vbe.Interop.Reference reference in sourceWorkBook.VBProject.References)
+            {
+                if (!_references.ContainsKey(reference.Guid))
+                {
+                    activeBook.VBProject.References.AddFromGuid(reference.Guid, reference.Major, reference.Minor);
+                    _references.Add(reference.Guid, reference.Description);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Replace - this will be handedl by the BAM.Fundamentals-AddIn.xll.config
+        /// anything in the app config will be picked up by the XLL 
+        /// </summary>
+        /// <returns></returns>
+        private Configuration GetAppConfiguration()
+        {
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            var extension = ".dll.config";
+
+            var configMap = new ExeConfigurationFileMap
+            {
+                ExeConfigFilename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, string.Format("{0}{1}", assembly, extension))
+            };
+
+            var config = ConfigurationManager.OpenMappedExeConfiguration(configMap, ConfigurationUserLevel.None);
+
+            return config;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        private string GetAppPath()
+        {
+            return AppDomain.CurrentDomain.BaseDirectory;
+        }
+
     }
 }
