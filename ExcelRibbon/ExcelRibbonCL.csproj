@@ -76,6 +76,11 @@
       <Name>ExcelRibbonWPF</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Templates\SampleTemplate.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(SolutionDir)Binaries\ExcelDna-0.33.9\Distribution\ExcelDna.xll" "$(TargetDir)ExcelRibbon-AddIn.xll*" /C /Y

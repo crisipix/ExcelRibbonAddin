@@ -7,10 +7,13 @@
     <customUI xmlns='http://schemas.microsoft.com/office/2006/01/customui' loadImage='LoadImage'>
       <ribbon>
         <tabs>
-          <tab id='CustomTab' label='My Tab'>
+          <tab id='CustomTab' label='Custom Excel Tab'>
             <group id='SampleGroup' label='My Sample Group'>
               <button id='Button1' label='Refresh' imageMso='R' size='large' onAction='OnRefresh' tag='ShowHelloMessage' />
               <button id='Button2' label='Launch Account Loader' imageMso='M' size='normal' onAction='OnButtonPressed'/>
+            </group >
+           <group id='TemplateGroup' label='Templates'>
+              <button id='SampleTemplate' label='Sample' imageMso='S' size='large' onAction='OnLoadSampleTemplate' tag='LoadSampleTemplate' />
             </group >
           </tab>
         </tabs>
